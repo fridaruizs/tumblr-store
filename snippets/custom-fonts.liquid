@@ -1,0 +1,27 @@
+{% doc %}
+  Loads custom font files from the assets folder.
+  
+  Place your font files (.woff, .woff2) in the assets/ folder and reference them here.
+  
+  @example
+  {% render 'custom-fonts' %}
+{% enddoc %}
+
+{% style %}
+  @font-face {
+    font-family: 'CustomFont';
+    src: url('{{ 'your-font-name.ttf' | asset_url }}') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* If you have bold, italic, or other variants, add them here */
+  /* @font-face {
+    font-family: 'CustomFont';
+    src: url('{{ 'your-font-bold.ttf' | asset_url }}') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  } */
+{% endstyle %}

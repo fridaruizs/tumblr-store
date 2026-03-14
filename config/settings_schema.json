@@ -19,6 +19,24 @@
         "id": "type_primary_font",
         "default": "work_sans_n4",
         "label": "t:general.primary"
+      },
+      {
+        "type": "header",
+        "content": "Custom fonts"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_custom_fonts",
+        "label": "Enable custom fonts",
+        "info": "Upload font files to assets/ folder and configure in custom-fonts.liquid",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "custom_font_family",
+        "label": "Custom font family name",
+        "info": "Enter the font-family name defined in custom-fonts.liquid",
+        "default": "CustomFont"
       }
     ]
   },
@@ -77,6 +95,79 @@
         "unit": "px",
         "label": "t:labels.input_corner_radius",
         "default": 4
+      }
+    ]
+  },
+  {
+    "name": "Tumblr Palette",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Post type colors"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_dashboard_blue",
+        "default": "#36465D",
+        "label": "Dashboard blue"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_text_gray",
+        "default": "#444444",
+        "label": "Text post gray"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_photo_red",
+        "default": "#D95E40",
+        "label": "Photo red"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_quote_gold",
+        "default": "#F2992E",
+        "label": "Quote gold"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_link_green",
+        "default": "#56BC8A",
+        "label": "Link green"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_chat_blue",
+        "default": "#529ECC",
+        "label": "Chat blue"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_audio_lavender",
+        "default": "#A77DC2",
+        "label": "Audio lavender"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_video_gray",
+        "default": "#748089",
+        "label": "Video gray"
+      },
+      {
+        "type": "header",
+        "content": "UI colors"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_icon_gray",
+        "default": "#9AA2AE",
+        "label": "Icon gray"
+      },
+      {
+        "type": "color",
+        "id": "tumbl_notes_gray",
+        "default": "#A1A1A1",
+        "label": "Notes gray"
       }
     ]
   }

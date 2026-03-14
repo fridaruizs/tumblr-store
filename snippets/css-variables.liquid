@@ -1,4 +1,8 @@
 {% style %}
+  {% if settings.use_custom_fonts %}
+    {% render 'custom-fonts' %}
+  {% endif %}
+
   {% # Loads all font variantions with display: swap %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
@@ -6,7 +10,11 @@
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    {% if settings.use_custom_fonts %}
+      --font-primary--family: {{ settings.custom_font_family }}, sans-serif;
+    {% else %}
+      --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    {% endif %}
     --font-primary--style: {{ settings.type_primary_font.style }};
     --font-primary--weight: {{ settings.type_primary_font.weight }};
     --page-width: {{ settings.max_page_width }};
@@ -14,5 +22,17 @@
     --color-background: {{ settings.background_color }};
     --color-foreground: {{ settings.foreground_color }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+
+    /* Tumblr palette */
+    --tumbl-dashboard-blue: {{ settings.tumbl_dashboard_blue }};
+    --tumbl-text-gray: {{ settings.tumbl_text_gray }};
+    --tumbl-photo-red: {{ settings.tumbl_photo_red }};
+    --tumbl-quote-gold: {{ settings.tumbl_quote_gold }};
+    --tumbl-link-green: {{ settings.tumbl_link_green }};
+    --tumbl-chat-blue: {{ settings.tumbl_chat_blue }};
+    --tumbl-audio-lavender: {{ settings.tumbl_audio_lavender }};
+    --tumbl-video-gray: {{ settings.tumbl_video_gray }};
+    --tumbl-icon-gray: {{ settings.tumbl_icon_gray }};
+    --tumbl-notes-gray: {{ settings.tumbl_notes_gray }};
   }
 {% endstyle %}
