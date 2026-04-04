@@ -4,6 +4,9 @@
   </h2>
 
   <div class="header__right">
+    <a href="{{ routes.root_url }}" class="header__home" aria-label="Home">
+      <i class="fa-solid fa-house"></i>
+    </a>
     <form class="header__search" action="{{ routes.search_url }}" method="get" role="search">
       <i class="fa-solid fa-magnifying-glass header__search-icon"></i>
       <input
@@ -65,6 +68,19 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+  }
+
+  .header__home {
+    color: #9aa2ae;
+    font-size: 1.5rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+  }
+
+  .header__home:hover {
+    color: #fff;
   }
 
   /* Search bar */

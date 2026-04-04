@@ -64,5 +64,14 @@
     "search_placeholder": "Search",
     "account": "Account",
     "cart": "Cart"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "quantity": "Quantity",
+    "size_guide": "Size guide",
+    "size": "Size",
+    "chest": "Chest",
+    "waist": "Waist",
+    "hips": "Hips"
   }
 }
