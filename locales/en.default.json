@@ -59,5 +59,10 @@
       "underwear": "Underwear",
       "accessories": "Accessories"
     }
+  },
+  "header": {
+    "search_placeholder": "Search",
+    "account": "Account",
+    "cart": "Cart"
   }
 }

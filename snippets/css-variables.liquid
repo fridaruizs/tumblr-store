@@ -1,7 +1,5 @@
 {% style %}
-  {% if settings.use_custom_fonts %}
-    {% render 'custom-fonts' %}
-  {% endif %}
+  {% render 'custom-fonts' %}
 
   {% # Loads all font variantions with display: swap %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
@@ -10,13 +8,10 @@
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    {% if settings.use_custom_fonts %}
-      --font-primary--family: {{ settings.custom_font_family }}, sans-serif;
-    {% else %}
-      --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    {% endif %}
+    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
     --font-primary--style: {{ settings.type_primary_font.style }};
     --font-primary--weight: {{ settings.type_primary_font.weight }};
+    --font-title--family: 'Bookman', Georgia, serif;
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
     --color-background: {{ settings.background_color }};
