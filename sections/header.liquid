@@ -1,3 +1,5 @@
+<div class="site-tagline">crafted in argentina to make you feel special</div>
+
 <header class="site-header">
   <h2 class="header__title">
     {{ shop.name | link_to: routes.root_url }}
@@ -35,6 +37,19 @@
 </header>
 
 {% stylesheet %}
+  .site-tagline {
+    background: #36465D;
+    color: #9aa2ae;
+    text-align: center;
+    font-family: var(--font-title--family);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 2rem 0.35rem;
+    grid-column: 1 / -1;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .site-header {
     height: 4rem;
     display: flex;

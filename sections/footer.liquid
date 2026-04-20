@@ -11,6 +11,17 @@
     {% endfor %}
   </div>
 
+  <div class="footer__social">
+    <a href="https://www.instagram.com/suspiria.com.ar/" target="_blank" rel="noopener" aria-label="Instagram" class="footer__social-link">
+      <i class="fa-brands fa-instagram"></i>
+    </a>
+    {% if shop.email != blank %}
+      <a href="mailto:{{ shop.email }}" aria-label="Email us" class="footer__social-link">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
+    {% endif %}
+  </div>
+
   <div class="footer__payment">
     {% if section.settings.show_payment_icons %}
       {% for type in shop.enabled_payment_types %}
@@ -31,9 +42,20 @@
     color: var(--color-foreground);
   }
   footer .footer__links,
-  footer .footer__payment {
+  footer .footer__payment,
+  footer .footer__social {
     display: flex;
     gap: 1rem;
+  }
+
+  .footer__social-link {
+    font-size: 1.3rem;
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .footer__social-link:hover {
+    color: #529ECC;
   }
 {% endstylesheet %}
 

@@ -1,52 +1,27 @@
 <div class="dashboard">
 
-  <!-- Category nav bar -->
-  <nav class="dashboard__categories">
-    <a href="{{ routes.all_products_collection_url }}" class="dashboard__cat-item dashboard__cat-item--shopall">
-      <span class="dashboard__cat-icon">Aa</span>
-      <span>{{ 'dashboard.categories.shop_all' | t }}</span>
-    </a>
-    <a href="{{ routes.root_url }}collections/tees" class="dashboard__cat-item dashboard__cat-item--tees">
-      <span class="dashboard__cat-icon" style="color:#D95E40;">
-        <i class="fa-solid fa-camera"></i>
-      </span>
-      <span>{{ 'dashboard.categories.tees' | t }}</span>
-    </a>
-    <a href="{{ routes.root_url }}collections/dresses" class="dashboard__cat-item dashboard__cat-item--dresses">
-      <span class="dashboard__cat-icon" style="color:#F2992E;">
-        <i class="fa-solid fa-quote-left"></i>
-      </span>
-      <span>{{ 'dashboard.categories.dresses' | t }}</span>
-    </a>
-    <a href="{{ routes.root_url }}collections/skirts" class="dashboard__cat-item dashboard__cat-item--skirts">
-      <span class="dashboard__cat-icon" style="color:#56BC8A;">
-        <i class="fa-solid fa-infinity"></i>
-      </span>
-      <span>{{ 'dashboard.categories.skirts' | t }}</span>
-    </a>
-    <a href="{{ routes.root_url }}collections/blouses" class="dashboard__cat-item dashboard__cat-item--blouses">
-      <span class="dashboard__cat-icon" style="color:#529ECC;">
-        <i class="fa-solid fa-comment"></i>
-      </span>
-      <span>{{ 'dashboard.categories.blouses' | t }}</span>
-    </a>
-    <a href="{{ routes.root_url }}collections/underwear" class="dashboard__cat-item dashboard__cat-item--underwear">
-      <span class="dashboard__cat-icon" style="color:#A77DC2;">
-        <i class="fa-solid fa-headphones"></i>
-      </span>
-      <span>{{ 'dashboard.categories.underwear' | t }}</span>
-    </a>
-    <a href="{{ routes.root_url }}collections/accessories" class="dashboard__cat-item dashboard__cat-item--accessories">
-      <span class="dashboard__cat-icon" style="color:#748089;">
-        <i class="fa-solid fa-video"></i>
-      </span>
-      <span>{{ 'dashboard.categories.accessories' | t }}</span>
-    </a>
-  </nav>
+  {% render 'category-nav' %}
+
+  <!-- Carousel card -->
+  <article class="dashboard__post dashboard__carousel">
+    <div class="dashboard__post-header">
+      <h2 class="dashboard__post-title">a tale of two sisters</h2>
+    </div>
+    <div class="dashboard__carousel-track" id="dashCarouselTrack">
+      <div class="dashboard__carousel-slide">
+        <img src="{{ 'carrousel-1.jpeg' | asset_url }}" alt="Gallery image 1" loading="lazy" width="740" height="480">
+      </div>
+    </div>
+    <button class="dashboard__carousel-btn dashboard__carousel-btn--prev" onclick="dashCarousel(-1)" aria-label="Previous">&#8249;</button>
+    <button class="dashboard__carousel-btn dashboard__carousel-btn--next" onclick="dashCarousel(1)" aria-label="Next">&#8250;</button>
+    <div class="dashboard__carousel-dots" id="dashCarouselDots">
+      <span class="dashboard__carousel-dot dashboard__carousel-dot--active"></span>
+    </div>
+  </article>
 
   <!-- Product feed -->
   <div class="dashboard__feed">
-    {%- assign all_products = collections.all.products -%}
+    {%- assign all_products = collections['a-tale-of-two-sisters'].products -%}
     {%- if all_products.size > 0 -%}
 
       {%- for product in all_products -%}
@@ -98,7 +73,9 @@
   .dashboard {
     max-width: 740px;
     margin: 0 auto;
-    padding: 1rem var(--page-margin);
+    padding: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* Category nav */
@@ -125,7 +102,8 @@
     font-size: 0.75rem;
     white-space: nowrap;
     border-right: 1px solid #eee;
-    flex: 1;
+    flex: 0 0 80px;
+    width: 80px;
   }
 
   .dashboard__cat-item:last-child {
@@ -204,7 +182,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
+    object-position: center;
   }
 
   .dashboard__image-slot {
@@ -221,9 +199,8 @@
   .dashboard__image-slot--single img {
     width: 100%;
     height: 400px;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    background: #f5f5f5;
   }
 
   .dashboard__image-slot img {
@@ -237,7 +214,90 @@
     aspect-ratio: 3 / 4;
     background: #1a1a1a;
   }
+
+  /* Carousel */
+  .dashboard__carousel {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard__carousel-track {
+    display: flex;
+    transition: transform 0.4s ease;
+  }
+
+  .dashboard__carousel-slide {
+    min-width: 100%;
+    line-height: 0;
+  }
+
+  .dashboard__carousel-slide img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .dashboard__carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .dashboard__carousel-btn--prev { left: 10px; }
+  .dashboard__carousel-btn--next { right: 10px; }
+
+  .dashboard__carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+  }
+
+  .dashboard__carousel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    display: block;
+  }
+
+  .dashboard__carousel-dot--active {
+    background: #fff;
+  }
 {% endstylesheet %}
+
+{% javascript %}
+  var dashCarouselIndex = 0;
+  function dashCarousel(dir) {
+    var track = document.getElementById('dashCarouselTrack');
+    if (!track) return;
+    var slides = track.querySelectorAll('.dashboard__carousel-slide');
+    var dots = document.querySelectorAll('.dashboard__carousel-dot');
+    if (slides.length <= 1) return;
+    dots[dashCarouselIndex].classList.remove('dashboard__carousel-dot--active');
+    dashCarouselIndex = (dashCarouselIndex + dir + slides.length) % slides.length;
+    track.style.transform = 'translateX(-' + (dashCarouselIndex * 100) + '%)';
+    dots[dashCarouselIndex].classList.add('dashboard__carousel-dot--active');
+  }
+{% endjavascript %}
 
 {% schema %}
 {

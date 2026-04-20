@@ -52,12 +52,11 @@
   "dashboard": {
     "categories": {
       "shop_all": "Shop all",
-      "tees": "Tees",
+      "tees": "T-shirts",
       "dresses": "Dresses",
       "skirts": "Skirts",
       "blouses": "Blouses",
-      "underwear": "Underwear",
-      "accessories": "Accessories"
+      "polos": "Polos"
     }
   },
   "header": {

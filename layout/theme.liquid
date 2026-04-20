@@ -34,5 +34,67 @@
     {{ content_for_layout }}
 
     {% sections 'footer-group' %}
+
+    <script>
+      (function() {
+        var canvas = document.createElement('canvas');
+        canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:99999;';
+        document.body.appendChild(canvas);
+        var ctx = canvas.getContext('2d');
+
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        var mx = -100, my = -100;
+        document.addEventListener('mousemove', function(e) {
+          mx = e.clientX;
+          my = e.clientY;
+        });
+
+        var particles = [];
+        var COLOURS = ['#ffffff','#ffe4f0','#ffd6f0','#e8d5ff','#d5eaff'];
+
+        function spawn() {
+          particles.push({
+            x: mx, y: my,
+            vx: (Math.random() - 0.5) * 2,
+            vy: -Math.random() * 2 - 1,
+            alpha: 1,
+            size: Math.random() * 4 + 2,
+            colour: COLOURS[Math.floor(Math.random() * COLOURS.length)]
+          });
+        }
+
+        var frame = 0;
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          if (frame % 2 === 0) spawn();
+          frame++;
+
+          for (var i = particles.length - 1; i >= 0; i--) {
+            var p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.05;
+            p.alpha -= 0.02;
+            if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.colour;
+            // draw a small cross/star shape
+            ctx.fillRect(p.x - p.size/2, p.y - 1, p.size, 2);
+            ctx.fillRect(p.x - 1, p.y - p.size/2, 2, p.size);
+            ctx.restore();
+          }
+          requestAnimationFrame(loop);
+        }
+        loop();
+      })();
+    </script>
   </body>
 </html>
