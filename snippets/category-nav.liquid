@@ -5,13 +5,9 @@
 {% enddoc %}
 
 <nav class="cat-nav">
-  <a href="{{ routes.all_products_collection_url }}" class="cat-nav__item{% if active_handle == 'all' %} cat-nav__item--active{% endif %}">
+  <a href="{{ routes.root_url }}collections/a-tale-of-two-sisters" class="cat-nav__item{% if active_handle == 'a-tale-of-two-sisters' %} cat-nav__item--active{% endif %}">
     <span class="cat-nav__icon cat-nav__icon--shopall">Aa</span>
     <span class="cat-nav__label">{{ 'dashboard.categories.shop_all' | t }}</span>
-  </a>
-  <a href="{{ routes.root_url }}collections/tumblr-tshirt" class="cat-nav__item{% if active_handle == 'tumblr-tshirt' %} cat-nav__item--active{% endif %}">
-    <span class="cat-nav__icon" style="color:#D95E40;"><i class="fa-solid fa-camera"></i></span>
-    <span class="cat-nav__label">{{ 'dashboard.categories.tees' | t }}</span>
   </a>
   <a href="{{ routes.root_url }}collections/tumblr-dress" class="cat-nav__item{% if active_handle == 'tumblr-dress' %} cat-nav__item--active{% endif %}">
     <span class="cat-nav__icon" style="color:#F2992E;"><i class="fa-solid fa-quote-left"></i></span>
@@ -23,7 +19,15 @@
   </a>
   <a href="{{ routes.root_url }}collections/tumblr-shirts" class="cat-nav__item{% if active_handle == 'tumblr-shirts' %} cat-nav__item--active{% endif %}">
     <span class="cat-nav__icon" style="color:#529ECC;"><i class="fa-solid fa-comment"></i></span>
-    <span class="cat-nav__label">{{ 'dashboard.categories.blouses' | t }}</span>
+    <span class="cat-nav__label">{{ 'dashboard.categories.shirts_blouses' | t }}</span>
+  </a>
+  <a href="{{ routes.root_url }}collections/tumblr-tshirt" class="cat-nav__item{% if active_handle == 'tumblr-tshirt' %} cat-nav__item--active{% endif %}">
+    <span class="cat-nav__icon" style="color:#D95E40;"><i class="fa-solid fa-camera"></i></span>
+    <span class="cat-nav__label">{{ 'dashboard.categories.tshirts_polos' | t }}</span>
+  </a>
+  <a href="{{ routes.root_url }}collections/archive-sale" class="cat-nav__item{% if active_handle == 'archive-sale' %} cat-nav__item--active{% endif %}">
+    <span class="cat-nav__icon" style="color:#748089;"><i class="fa-solid fa-tag"></i></span>
+    <span class="cat-nav__label">{{ 'dashboard.categories.archive_sale' | t }}</span>
   </a>
 </nav>
 
@@ -80,6 +84,10 @@
   .cat-nav__label {
     font-size: 0.75rem;
     text-align: center;
+    padding: 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .cat-nav__item--active {

@@ -21,32 +21,30 @@
       {%- endif -%}
 
       {%- if product.description != blank -%}
-        <div class="product-description">{{ product.description }}</div>
+        {%- assign desc_parts = product.description | split: '<div class="product__description' -%}
+        {%- assign split_tag = '<div class="product__description' -%}
+        {%- if desc_parts.size == 1 -%}
+          {%- assign desc_parts = product.description | split: '<table ' -%}
+          {%- assign split_tag = '<table ' -%}
+        {%- endif -%}
+        {%- if desc_parts.size > 1 -%}
+          {%- assign desc_text = desc_parts[0] -%}
+          {%- assign desc_text = desc_text | split: '<p><strong><em>All Suspiria' | first -%}
+          {%- assign desc_text = desc_text | split: '<p><em><strong>All Suspiria' | first -%}
+          {%- assign desc_text = desc_text | split: '<p><meta charset="utf-8"><strong><em>All Suspiria' | first -%}
+          {%- assign desc_text = desc_text | split: '<p><meta charset="utf-8"><em><strong>All Suspiria' | first -%}
+          {%- assign desc_table = split_tag | append: desc_parts[1] -%}
+          <div class="product-description">{{ desc_text }}</div>
+        {%- else -%}
+          <div class="product-description">{{ product.description }}</div>
+        {%- endif -%}
       {%- endif -%}
     </div>
 
-    <!-- Size guide -->
-    {%- assign size_option = product.options_by_name['Size'] -%}
-    {%- if size_option -%}
+    {%- if desc_parts.size > 1 -%}
       <div class="product-card product-card--sizing">
         <h3 class="product-sizing-title">{{ 'product.size_guide' | t }}</h3>
-        <table class="product-size-table">
-          <thead>
-            <tr>
-              <th>{{ 'product.size' | t }}</th>
-              <th>{{ 'product.chest' | t }}</th>
-              <th>{{ 'product.waist' | t }}</th>
-              <th>{{ 'product.hips' | t }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>XS</td><td>32"</td><td>24"</td><td>34"</td></tr>
-            <tr><td>S</td><td>34"</td><td>26"</td><td>36"</td></tr>
-            <tr><td>M</td><td>36"</td><td>28"</td><td>38"</td></tr>
-            <tr><td>L</td><td>38"</td><td>30"</td><td>40"</td></tr>
-            <tr><td>XL</td><td>40"</td><td>32"</td><td>42"</td></tr>
-          </tbody>
-        </table>
+        {{ desc_table }}
       </div>
     {%- endif -%}
 
@@ -190,6 +188,20 @@
   /* Size table */
   .product-card--sizing {
     padding: 1.25rem;
+  }
+
+  .product-card--sizing table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    color: #555;
+  }
+
+  .product-card--sizing td,
+  .product-card--sizing th {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
   }
 
   .product-sizing-title {
@@ -376,6 +388,15 @@
 
   .product-add-btn:hover {
     background: rgba(255,255,255,0.25);
+  }
+
+  .product-card--sidebar .shopify-payment-button {
+    padding: 0 1.25rem;
+  }
+
+  .product-card--sidebar .shopify-payment-button__more-options {
+    padding-bottom: 1.25rem;
+    display: block;
   }
 
   @media (max-width: 700px) {

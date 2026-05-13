@@ -20,11 +20,15 @@
     </form>
 
     <div class="header__icons">
-      {% if shop.customer_accounts_enabled %}
-        <a href="{{ routes.account_url }}" aria-label="{{ 'header.account' | t }}">
-          <i class="fa-solid fa-user"></i>
+      {% if shop.email != blank %}
+        <a href="mailto:{{ shop.email }}" aria-label="Email us">
+          <i class="fa-solid fa-envelope"></i>
         </a>
       {% endif %}
+
+      <a href="https://www.instagram.com/suspiria.com.ar/" target="_blank" rel="noopener" aria-label="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
 
       <a href="{{ routes.cart_url }}" class="header__cart" aria-label="{{ 'header.cart' | t }}">
         <i class="fa-solid fa-bag-shopping"></i>
@@ -38,7 +42,7 @@
 
 {% stylesheet %}
   .site-tagline {
-    background: #36465D;
+    background: #2c3a4a;
     color: #9aa2ae;
     text-align: center;
     font-family: var(--font-title--family);
@@ -48,6 +52,7 @@
     grid-column: 1 / -1;
     width: 100%;
     box-sizing: border-box;
+    border-bottom: 1px solid #4a5f73;
   }
 
   .site-header {

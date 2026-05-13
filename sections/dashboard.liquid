@@ -4,19 +4,21 @@
 
   <!-- Carousel card -->
   <article class="dashboard__post dashboard__carousel">
-    <div class="dashboard__post-header">
-      <h2 class="dashboard__post-title">a tale of two sisters</h2>
-    </div>
     <div class="dashboard__carousel-track" id="dashCarouselTrack">
-      <div class="dashboard__carousel-slide">
-        <img src="{{ 'carrousel-1.jpeg' | asset_url }}" alt="Gallery image 1" loading="lazy" width="740" height="480">
-      </div>
+      {%- assign carousel_images = '' -%}
+      {%- for i in (1..6) -%}
+        {%- assign img_key = 'carousel_image_' | append: i -%}
+        {%- assign img = section.settings[img_key] -%}
+        {%- if img != blank -%}
+          <div class="dashboard__carousel-slide">
+            {{ img | image_url: width: 740 | image_tag: loading: 'lazy', width: 740, height: 480 }}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
-    <button class="dashboard__carousel-btn dashboard__carousel-btn--prev" onclick="dashCarousel(-1)" aria-label="Previous">&#8249;</button>
-    <button class="dashboard__carousel-btn dashboard__carousel-btn--next" onclick="dashCarousel(1)" aria-label="Next">&#8250;</button>
-    <div class="dashboard__carousel-dots" id="dashCarouselDots">
-      <span class="dashboard__carousel-dot dashboard__carousel-dot--active"></span>
-    </div>
+    <button class="dashboard__carousel-btn dashboard__carousel-btn--prev" id="dashCarouselPrev" aria-label="Previous">&#8249;</button>
+    <button class="dashboard__carousel-btn dashboard__carousel-btn--next" id="dashCarouselNext" aria-label="Next">&#8250;</button>
+    <div class="dashboard__carousel-dots" id="dashCarouselDots"></div>
   </article>
 
   <!-- Product feed -->
@@ -220,6 +222,7 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 1rem;
+    min-height: 60px;
   }
 
   .dashboard__carousel-track {
@@ -285,18 +288,36 @@
 {% endstylesheet %}
 
 {% javascript %}
-  var dashCarouselIndex = 0;
-  function dashCarousel(dir) {
-    var track = document.getElementById('dashCarouselTrack');
-    if (!track) return;
-    var slides = track.querySelectorAll('.dashboard__carousel-slide');
-    var dots = document.querySelectorAll('.dashboard__carousel-dot');
-    if (slides.length <= 1) return;
-    dots[dashCarouselIndex].classList.remove('dashboard__carousel-dot--active');
-    dashCarouselIndex = (dashCarouselIndex + dir + slides.length) % slides.length;
-    track.style.transform = 'translateX(-' + (dashCarouselIndex * 100) + '%)';
-    dots[dashCarouselIndex].classList.add('dashboard__carousel-dot--active');
-  }
+  (function() {
+    var dashCarouselIndex = 0;
+    var dashTrack = document.getElementById('dashCarouselTrack');
+    var dashDotsContainer = document.getElementById('dashCarouselDots');
+    var prevBtn = document.getElementById('dashCarouselPrev');
+    var nextBtn = document.getElementById('dashCarouselNext');
+
+    if (!dashTrack) return;
+
+    var slides = dashTrack.querySelectorAll('.dashboard__carousel-slide');
+
+    // Build dots
+    slides.forEach(function(_, i) {
+      var dot = document.createElement('span');
+      dot.className = 'dashboard__carousel-dot' + (i === 0 ? ' dashboard__carousel-dot--active' : '');
+      dashDotsContainer.appendChild(dot);
+    });
+
+    function goTo(dir) {
+      var dots = dashDotsContainer.querySelectorAll('.dashboard__carousel-dot');
+      if (slides.length <= 1) return;
+      dots[dashCarouselIndex].classList.remove('dashboard__carousel-dot--active');
+      dashCarouselIndex = (dashCarouselIndex + dir + slides.length) % slides.length;
+      dashTrack.style.transform = 'translateX(-' + (dashCarouselIndex * 100) + '%)';
+      dots[dashCarouselIndex].classList.add('dashboard__carousel-dot--active');
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function() { goTo(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function() { goTo(1); });
+  })();
 {% endjavascript %}
 
 {% schema %}
@@ -309,6 +330,40 @@
       "label": "Fallback post title",
       "default": "a tale of two sisters",
       "info": "Shown only when no products are found"
+    },
+    {
+      "type": "header",
+      "content": "Carousel images"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_1",
+      "label": "Carousel image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_2",
+      "label": "Carousel image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_3",
+      "label": "Carousel image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_4",
+      "label": "Carousel image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_5",
+      "label": "Carousel image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_6",
+      "label": "Carousel image 6"
     }
   ],
   "presets": [
