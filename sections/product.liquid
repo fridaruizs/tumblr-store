@@ -1,45 +1,443 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+<div class="product-layout">
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+  <!-- Left: main card -->
+  <div class="product-main">
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
+    <!-- Single card: title + images + description -->
+    <div class="product-card product-card--main">
+      <div class="product-card-header">
+        <h1 class="product-title">{{ product.title }}</h1>
+        <span class="product-sidebar-price">{{ product.price | money }}</span>
+      </div>
+
+      {%- if product.images.size >= 2 -%}
+        <div class="product-images-grid">
+          {%- for image in product.images -%}
+            {{ image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'product-img' }}
+          {%- endfor -%}
+        </div>
+      {%- elsif product.featured_image -%}
+        {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'product-img product-img--single' }}
+      {%- endif -%}
+
+      {%- if product.description != blank -%}
+        {%- assign desc_parts = product.description | split: '<div class="product__description' -%}
+        {%- assign split_tag = '<div class="product__description' -%}
+        {%- if desc_parts.size == 1 -%}
+          {%- assign desc_parts = product.description | split: '<table ' -%}
+          {%- assign split_tag = '<table ' -%}
+        {%- endif -%}
+        {%- if desc_parts.size > 1 -%}
+          {%- assign desc_text = desc_parts[0] -%}
+          {%- assign desc_text = desc_text | split: '<p><strong><em>All Suspiria' | first -%}
+          {%- assign desc_text = desc_text | split: '<p><em><strong>All Suspiria' | first -%}
+          {%- assign desc_text = desc_text | split: '<p><meta charset="utf-8"><strong><em>All Suspiria' | first -%}
+          {%- assign desc_text = desc_text | split: '<p><meta charset="utf-8"><em><strong>All Suspiria' | first -%}
+          {%- assign desc_table = split_tag | append: desc_parts[1] -%}
+          <div class="product-description">{{ desc_text }}</div>
+        {%- else -%}
+          <div class="product-description">{{ product.description }}</div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    {%- if desc_parts.size > 1 -%}
+      <div class="product-card product-card--sizing">
+        <h3 class="product-sizing-title">{{ 'product.size_guide' | t }}</h3>
+        {{ desc_table }}
+      </div>
+    {%- endif -%}
+
+  </div>
+
+  <!-- Right: sidebar -->
+  <aside class="product-sidebar">
+    <div class="product-card--sidebar">
+
+      <div class="sidebar-header">
+        <span class="sidebar-shop-name">{{ shop.name }}</span>
+        <span class="sidebar-shop-url">{{ shop.domain }}</span>
+      </div>
+
+      {% form 'product', product %}
+        {%- assign current_variant = product.selected_or_first_available_variant -%}
+
+        {%- for option in product.options_with_values -%}
+          <div class="sidebar-row">
+            <div class="sidebar-row-label">
+              <i class="fa-solid {% if option.name == 'Color' %}fa-palette{% elsif option.name == 'Size' %}fa-ruler{% else %}fa-tag{% endif %} sidebar-row-icon"></i>
+              <span>{{ option.name }}</span>
+            </div>
+            {%- if option.name == 'Color' -%}
+              <div class="product-option-swatches">
+                {%- for value in option.values -%}
+                  <button type="button" class="product-swatch" style="background:{{ value | downcase | replace: ' ', '' }};" title="{{ value }}" data-option-position="{{ option.position }}" data-value="{{ value }}"></button>
+                {%- endfor -%}
+              </div>
+            {%- else -%}
+              <div class="product-option-pills">
+                {%- for value in option.values -%}
+                  <button type="button" class="product-pill" data-option-position="{{ option.position }}" data-value="{{ value }}">{{ value }}</button>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+
+        <div class="sidebar-row">
+          <div class="sidebar-row-label">
+            <i class="fa-solid fa-hashtag sidebar-row-icon"></i>
+            <span>{{ 'product.quantity' | t }}</span>
+          </div>
+          <div class="product-quantity-control">
+            <button type="button" class="qty-btn" id="qty-minus">−</button>
+            <input type="number" name="quantity" value="1" min="1" id="qty-input">
+            <button type="button" class="qty-btn" id="qty-plus">+</button>
+          </div>
+        </div>
+
+        <div class="sidebar-row sidebar-row--price">
+          <i class="fa-solid fa-tag sidebar-row-icon"></i>
+          <span>{{ product.price | money }}</span>
+        </div>
+
+        <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
+
+        <button type="submit" class="product-add-btn">
+          {{ 'product.add_to_cart' | t }}
+        </button>
+
+        {{ form | payment_button }}
+      {% endform %}
+
+    </div>
+  </aside>
+
 </div>
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+{% stylesheet %}
+  .product-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    align-items: start;
+    padding: 1.5rem var(--page-margin);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+  .product-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+  .product-card {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
 
-    <input type="text" name="quantity" min="1" value="1">
+  /* Images */
+  .product-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 4px;
+  }
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+  .product-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .product-img--single {
+    max-height: 500px;
+    object-fit: contain;
+    object-position: center;
+    background: #f5f5f5;
+  }
+
+  /* Description */
+  .product-card--main {
+    padding: 0;
+  }
+
+  .product-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1rem 1.25rem 0.75rem;
+  }
+
+  .product-title {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 0;
+    color: #333;
+  }
+
+  .product-description {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  /* Size table */
+  .product-card--sizing {
+    padding: 1.25rem;
+  }
+
+  .product-card--sizing table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    color: #555;
+  }
+
+  .product-card--sizing td,
+  .product-card--sizing th {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+  }
+
+  .product-sizing-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.75rem;
+  }
+
+  .product-size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    color: #888;
+  }
+
+  .product-size-table th {
+    text-align: left;
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: #aaa;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  .product-size-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  /* Sidebar */
+  .product-sidebar {
+    position: sticky;
+    top: 5rem;
+  }
+
+  .product-card--sidebar {
+    background: #36465D;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .sidebar-shop-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .sidebar-shop-url {
+    font-size: 0.78rem;
+    color: #9aa2ae;
+  }
+
+  .sidebar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-row--price {
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .sidebar-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .sidebar-row-icon {
+    color: #9aa2ae;
+    width: 1rem;
+    text-align: center;
+  }
+
+  .product-option-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .product-pill {
+    padding: 0.25rem 0.65rem;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 3px;
+    background: transparent;
+    font-size: 0.8rem;
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .product-pill:hover,
+  .product-pill.active {
+    border-color: #fff;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+  }
+
+  .product-option-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .product-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+  }
+
+  .product-swatch:hover,
+  .product-swatch.active {
+    border-color: #fff;
+  }
+
+  .product-quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 3px;
+    overflow: hidden;
+    width: fit-content;
+  }
+
+  .qty-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    padding: 0.3rem 0.65rem;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  #qty-input {
+    width: 2.5rem;
+    text-align: center;
+    border: none;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #fff;
+  }
+
+  .product-add-btn {
+    margin: 1rem 1.25rem;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s;
+  }
+
+  .product-add-btn:hover {
+    background: rgba(255,255,255,0.25);
+  }
+
+  .product-card--sidebar .shopify-payment-button {
+    padding: 0 1.25rem;
+  }
+
+  .product-card--sidebar .shopify-payment-button__more-options {
+    padding-bottom: 1.25rem;
+    display: block;
+  }
+
+  @media (max-width: 700px) {
+    .product-layout {
+      grid-template-columns: 1fr;
+    }
+    .product-sidebar {
+      position: static;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const pills = document.querySelectorAll('.product-pill');
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const pos = pill.dataset.optionPosition;
+      document.querySelectorAll(`.product-pill[data-option-position="${pos}"]`).forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+
+  const swatches = document.querySelectorAll('.product-swatch');
+  swatches.forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      const pos = swatch.dataset.optionPosition;
+      document.querySelectorAll(`.product-swatch[data-option-position="${pos}"]`).forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+    });
+  });
+
+  document.getElementById('qty-minus')?.addEventListener('click', () => {
+    const input = document.getElementById('qty-input');
+    if (input.value > 1) input.value = parseInt(input.value) - 1;
+  });
+
+  document.getElementById('qty-plus')?.addEventListener('click', () => {
+    const input = document.getElementById('qty-input');
+    input.value = parseInt(input.value) + 1;
+  });
+{% endjavascript %}
 
 {% schema %}
 {

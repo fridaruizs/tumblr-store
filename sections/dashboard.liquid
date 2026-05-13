@@ -1,0 +1,375 @@
+<div class="dashboard">
+
+  {% render 'category-nav' %}
+
+  <!-- Carousel card -->
+  <article class="dashboard__post dashboard__carousel">
+    <div class="dashboard__carousel-track" id="dashCarouselTrack">
+      {%- assign carousel_images = '' -%}
+      {%- for i in (1..6) -%}
+        {%- assign img_key = 'carousel_image_' | append: i -%}
+        {%- assign img = section.settings[img_key] -%}
+        {%- if img != blank -%}
+          <div class="dashboard__carousel-slide">
+            {{ img | image_url: width: 740 | image_tag: loading: 'lazy', width: 740, height: 480 }}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <button class="dashboard__carousel-btn dashboard__carousel-btn--prev" id="dashCarouselPrev" aria-label="Previous">&#8249;</button>
+    <button class="dashboard__carousel-btn dashboard__carousel-btn--next" id="dashCarouselNext" aria-label="Next">&#8250;</button>
+    <div class="dashboard__carousel-dots" id="dashCarouselDots"></div>
+  </article>
+
+  <!-- Product feed -->
+  <div class="dashboard__feed">
+    {%- assign all_products = collections['a-tale-of-two-sisters'].products -%}
+    {%- if all_products.size > 0 -%}
+
+      {%- for product in all_products -%}
+        <article class="dashboard__post">
+          <div class="dashboard__post-header">
+            <h2 class="dashboard__post-title">
+              <a href="{{ product.url }}">{{ product.title }}</a>
+            </h2>
+            {%- if product.price -%}
+              <span class="dashboard__post-price">{{ product.price | money }}</span>
+            {%- endif -%}
+          </div>
+          {%- if product.images.size >= 2 -%}
+            <div class="dashboard__post-images">
+              <a href="{{ product.url }}" class="dashboard__image-slot">
+                {{ product.images[0] | image_url: width: 600 | image_tag: loading: 'lazy' }}
+              </a>
+              <a href="{{ product.url }}" class="dashboard__image-slot">
+                {{ product.images[1] | image_url: width: 600 | image_tag: loading: 'lazy' }}
+              </a>
+            </div>
+          {%- else -%}
+            <a href="{{ product.url }}" class="dashboard__image-slot dashboard__image-slot--single">
+              {%- if product.featured_image -%}
+                {{ product.featured_image | image_url: width: 740 | image_tag: loading: 'lazy' }}
+              {%- else -%}
+                <div class="dashboard__image-placeholder"></div>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        </article>
+      {%- endfor -%}
+
+    {%- else -%}
+      <article class="dashboard__post">
+        <div class="dashboard__post-header">
+          <h2 class="dashboard__post-title">{{ section.settings.post_title }}</h2>
+        </div>
+        <div class="dashboard__image-slot">
+          <div class="dashboard__image-placeholder"></div>
+        </div>
+      </article>
+    {%- endif -%}
+  </div>
+
+</div>
+
+{% stylesheet %}
+  .dashboard {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Category nav */
+  .dashboard__categories {
+    background: #fff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .dashboard__cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    color: #444;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border-right: 1px solid #eee;
+    flex: 0 0 80px;
+    width: 80px;
+  }
+
+  .dashboard__cat-item:last-child {
+    border-right: none;
+  }
+
+  .dashboard__cat-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+
+  .dashboard__cat-item--shopall .dashboard__cat-icon {
+    font-family: var(--font-title--family);
+    font-weight: 700;
+    color: #36465D;
+    font-size: 1.5rem;
+  }
+
+  /* Post card */
+  .dashboard__feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dashboard__post {
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .dashboard__post-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 1rem 1.25rem 0.75rem;
+  }
+
+  .dashboard__post-title {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 0;
+    color: #333;
+  }
+
+  .dashboard__post-title a {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .dashboard__post-price {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+
+  .dashboard__post-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .dashboard__post-images .dashboard__image-slot {
+    overflow: hidden;
+    height: 500px;
+  }
+
+  .dashboard__post-images .dashboard__image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .dashboard__image-slot {
+    display: block;
+    text-decoration: none;
+    line-height: 0;
+  }
+
+  .dashboard__image-slot--single {
+    max-height: 400px;
+    overflow: hidden;
+  }
+
+  .dashboard__image-slot--single img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .dashboard__image-slot img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .dashboard__image-placeholder {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #1a1a1a;
+  }
+
+  /* Carousel */
+  .dashboard__carousel {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    min-height: 60px;
+  }
+
+  .dashboard__carousel-track {
+    display: flex;
+    transition: transform 0.4s ease;
+  }
+
+  .dashboard__carousel-slide {
+    min-width: 100%;
+    line-height: 0;
+  }
+
+  .dashboard__carousel-slide img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .dashboard__carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .dashboard__carousel-btn--prev { left: 10px; }
+  .dashboard__carousel-btn--next { right: 10px; }
+
+  .dashboard__carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+  }
+
+  .dashboard__carousel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    display: block;
+  }
+
+  .dashboard__carousel-dot--active {
+    background: #fff;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    var dashCarouselIndex = 0;
+    var dashTrack = document.getElementById('dashCarouselTrack');
+    var dashDotsContainer = document.getElementById('dashCarouselDots');
+    var prevBtn = document.getElementById('dashCarouselPrev');
+    var nextBtn = document.getElementById('dashCarouselNext');
+
+    if (!dashTrack) return;
+
+    var slides = dashTrack.querySelectorAll('.dashboard__carousel-slide');
+
+    // Build dots
+    slides.forEach(function(_, i) {
+      var dot = document.createElement('span');
+      dot.className = 'dashboard__carousel-dot' + (i === 0 ? ' dashboard__carousel-dot--active' : '');
+      dashDotsContainer.appendChild(dot);
+    });
+
+    function goTo(dir) {
+      var dots = dashDotsContainer.querySelectorAll('.dashboard__carousel-dot');
+      if (slides.length <= 1) return;
+      dots[dashCarouselIndex].classList.remove('dashboard__carousel-dot--active');
+      dashCarouselIndex = (dashCarouselIndex + dir + slides.length) % slides.length;
+      dashTrack.style.transform = 'translateX(-' + (dashCarouselIndex * 100) + '%)';
+      dots[dashCarouselIndex].classList.add('dashboard__carousel-dot--active');
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function() { goTo(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function() { goTo(1); });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Dashboard",
+  "settings": [
+    {
+      "type": "text",
+      "id": "post_title",
+      "label": "Fallback post title",
+      "default": "a tale of two sisters",
+      "info": "Shown only when no products are found"
+    },
+    {
+      "type": "header",
+      "content": "Carousel images"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_1",
+      "label": "Carousel image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_2",
+      "label": "Carousel image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_3",
+      "label": "Carousel image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_4",
+      "label": "Carousel image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_5",
+      "label": "Carousel image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "carousel_image_6",
+      "label": "Carousel image 6"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dashboard"
+    }
+  ]
+}
+{% endschema %}

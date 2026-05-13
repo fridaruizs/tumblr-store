@@ -48,5 +48,29 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "dashboard": {
+    "categories": {
+      "shop_all": "Shop all",
+      "dresses": "Dresses",
+      "skirts": "Skirts",
+      "shirts_blouses": "Shirts & Blouses",
+      "tshirts_polos": "T-shirts & Polos",
+      "archive_sale": "Archive Sale"
+    }
+  },
+  "header": {
+    "search_placeholder": "Search",
+    "account": "Account",
+    "cart": "Cart"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "quantity": "Quantity",
+    "size_guide": "Size guide",
+    "size": "Size",
+    "chest": "Chest",
+    "waist": "Waist",
+    "hips": "Hips"
   }
 }
