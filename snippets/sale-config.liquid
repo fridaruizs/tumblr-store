@@ -7,8 +7,11 @@
   Update this line whenever a discount starts or ends. No product or
   discount data in Shopify is touched by this file.
 
-  Format: one entry per product, "handle:percent_off", separated by "|".
+  Format: one entry per product, separated by "|":
+    handle:pct:value  - percent off (e.g. solanas-blouse:pct:10)
+    handle:amt:value  - fixed amount off, in whole currency units
+                        (e.g. lady-midi-skirt:amt:10 = $10 off)
 
   @example
   {% render 'sale-config' %}
-{% enddoc %}solanas-blouse:10|tenenbaum-polo-dress-blue:10|tenenbaum-polo-dress:10|cyber-turtleneck:20|perfect-school-skirt:15|perfect-skirt:15
+{% enddoc %}solanas-blouse:pct:10|tenenbaum-polo-dress-blue:pct:10|tenenbaum-polo-dress:pct:10|cyber-turtleneck:pct:20|perfect-school-skirt:pct:15|perfect-skirt:pct:15|lady-midi-skirt:amt:10|american-dream-skirt:amt:10

@@ -5,7 +5,9 @@
   Two sources are checked, in order:
   1. `product.compare_at_price` - a real "Compare at price" set in Shopify.
   2. `snippets/sale-config.liquid` - a manually maintained mirror of active
-     Shopify Automatic Discounts (which Liquid can't read directly).
+     Shopify Automatic Discounts (which Liquid can't read directly). Each
+     entry is "handle:pct:value" (percent off) or "handle:amt:value"
+     (fixed amount off, in whole currency units, e.g. dollars).
 
   @param {product} product - The product (or search result) to render the price for
   @param {string} [compare_class] - CSS class for the struck-through price
@@ -25,15 +27,20 @@
 {%- else -%}
   {%- capture sale_config_raw -%}{% render 'sale-config' %}{%- endcapture -%}
   {%- assign sale_pairs = sale_config_raw | strip | split: '|' -%}
-  {%- assign sale_percent = 0 -%}
+  {%- assign discount_amount = 0 -%}
   {%- for pair in sale_pairs -%}
     {%- assign parts = pair | strip | split: ':' -%}
     {%- if parts[0] == product.handle -%}
-      {%- assign sale_percent = parts[1] | plus: 0 -%}
+      {%- assign sale_type = parts[1] -%}
+      {%- assign sale_value = parts[2] | plus: 0 -%}
+      {%- if sale_type == 'pct' -%}
+        {%- assign discount_amount = product.price | times: sale_value | divided_by: 100 -%}
+      {%- elsif sale_type == 'amt' -%}
+        {%- assign discount_amount = sale_value | times: 100 -%}
+      {%- endif -%}
     {%- endif -%}
   {%- endfor -%}
-  {%- if sale_percent > 0 -%}
-    {%- assign discount_amount = product.price | times: sale_percent | divided_by: 100 -%}
+  {%- if discount_amount > 0 -%}
     {%- assign display_compare = product.price -%}
     {%- assign display_sale = product.price | minus: discount_amount -%}
   {%- endif -%}
