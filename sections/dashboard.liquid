@@ -33,7 +33,9 @@
               <a href="{{ product.url }}">{{ product.title }}</a>
             </h2>
             {%- if product.price -%}
-              <span class="dashboard__post-price">{{ product.price | money }}</span>
+              <span class="dashboard__post-price">
+                {%- render 'sale-price', product: product, compare_class: 'dashboard__post-price-compare', sale_class: 'dashboard__post-price-sale' -%}
+              </span>
             {%- endif -%}
           </div>
           {%- if product.images.size >= 2 -%}
@@ -167,6 +169,17 @@
     font-weight: 700;
     flex-shrink: 0;
     margin-left: 1rem;
+  }
+
+  .dashboard__post-price-compare {
+    font-weight: 400;
+    color: #aaa;
+    text-decoration: line-through;
+    margin-right: 0.35rem;
+  }
+
+  .dashboard__post-price-sale {
+    color: #ff6b6b;
   }
 
   .dashboard__post-images {

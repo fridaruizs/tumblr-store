@@ -1,0 +1,47 @@
+{% doc %}
+  Renders a product's price, with a struck-through original price and a
+  discounted price when applicable.
+
+  Two sources are checked, in order:
+  1. `product.compare_at_price` - a real "Compare at price" set in Shopify.
+  2. `snippets/sale-config.liquid` - a manually maintained mirror of active
+     Shopify Automatic Discounts (which Liquid can't read directly).
+
+  @param {product} product - The product (or search result) to render the price for
+  @param {string} [compare_class] - CSS class for the struck-through price
+  @param {string} [sale_class] - CSS class for the discounted price
+
+  @example
+  {% render 'sale-price', product: product %}
+  {% render 'sale-price', product: product, compare_class: 'price-compare', sale_class: 'price-sale' %}
+{% enddoc %}
+
+{%- assign display_compare = 0 -%}
+{%- assign display_sale = 0 -%}
+
+{%- if product.compare_at_price > product.price -%}
+  {%- assign display_compare = product.compare_at_price -%}
+  {%- assign display_sale = product.price -%}
+{%- else -%}
+  {%- capture sale_config_raw -%}{% render 'sale-config' %}{%- endcapture -%}
+  {%- assign sale_pairs = sale_config_raw | strip | split: '|' -%}
+  {%- assign sale_percent = 0 -%}
+  {%- for pair in sale_pairs -%}
+    {%- assign parts = pair | strip | split: ':' -%}
+    {%- if parts[0] == product.handle -%}
+      {%- assign sale_percent = parts[1] | plus: 0 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if sale_percent > 0 -%}
+    {%- assign discount_amount = product.price | times: sale_percent | divided_by: 100 -%}
+    {%- assign display_compare = product.price -%}
+    {%- assign display_sale = product.price | minus: discount_amount -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if display_sale > 0 -%}
+  <s class="{{ compare_class | default: 'price-compare' }}">{{ display_compare | money }}</s>
+  <span class="{{ sale_class | default: 'price-sale' }}">{{ display_sale | money }}</span>
+{%- else -%}
+  {{ product.price | money }}
+{%- endif -%}

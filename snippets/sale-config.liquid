@@ -1,0 +1,14 @@
+{% doc %}
+  Single source of truth for the "sale" pricing shown on the storefront.
+
+  Shopify Automatic Discounts don't expose their percentage or target
+  products to Liquid, so this list is a manual mirror of whichever
+  Automatic Discounts are currently turned on in Shopify Admin > Discounts.
+  Update this line whenever a discount starts or ends. No product or
+  discount data in Shopify is touched by this file.
+
+  Format: one entry per product, "handle:percent_off", separated by "|".
+
+  @example
+  {% render 'sale-config' %}
+{% enddoc %}solanas-blouse:10|tenenbaum-polo-dress-blue:10|tenenbaum-polo-dress:10|cyber-turtleneck:20|perfect-school-skirt:15|perfect-skirt:15

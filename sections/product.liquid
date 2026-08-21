@@ -7,7 +7,9 @@
     <div class="product-card product-card--main">
       <div class="product-card-header">
         <h1 class="product-title">{{ product.title }}</h1>
-        <span class="product-sidebar-price">{{ product.price | money }}</span>
+        <span class="product-sidebar-price">
+          {%- render 'sale-price', product: product, compare_class: 'product-price-compare', sale_class: 'product-price-sale' -%}
+        </span>
       </div>
 
       {%- if product.images.size >= 2 -%}
@@ -59,7 +61,8 @@
         <span class="sidebar-shop-url">{{ shop.domain }}</span>
       </div>
 
-      {% form 'product', product %}
+      <script>window.__productVariants = {{ product.variants | json }};</script>
+    {% form 'product', product %}
         {%- assign current_variant = product.selected_or_first_available_variant -%}
 
         {%- for option in product.options_with_values -%}
@@ -98,7 +101,7 @@
 
         <div class="sidebar-row sidebar-row--price">
           <i class="fa-solid fa-tag sidebar-row-icon"></i>
-          <span>{{ product.price | money }}</span>
+          <span>{%- render 'sale-price', product: product, compare_class: 'product-price-compare', sale_class: 'product-price-sale' -%}</span>
         </div>
 
         <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
@@ -280,9 +283,29 @@
   .sidebar-row--price {
     flex-direction: row;
     align-items: center;
+    gap: 0.5rem;
     font-size: 1.1rem;
     font-weight: 700;
     color: #fff;
+  }
+
+  .product-price-compare {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #9aa2ae;
+    text-decoration: line-through;
+  }
+
+  .product-price-sale {
+    color: #ff6b6b;
+  }
+
+  .product-sidebar-price .product-price-compare {
+    color: #999;
+  }
+
+  .product-sidebar-price .product-price-sale {
+    color: #333;
   }
 
   .sidebar-row-label {
@@ -410,21 +433,58 @@
 {% endstylesheet %}
 
 {% javascript %}
-  const pills = document.querySelectorAll('.product-pill');
-  pills.forEach(pill => {
+  const productVariants = window.__productVariants || [];
+
+  // Track selected options by position (1-indexed)
+  const selectedOptions = {};
+
+  // Initialise from the first available variant
+  const initialVariant = productVariants.find(v => v.available) || productVariants[0];
+  if (initialVariant) {
+    initialVariant.options.forEach((val, i) => {
+      selectedOptions[i + 1] = val;
+    });
+  }
+
+  function updateVariant() {
+    const match = productVariants.find(v =>
+      v.options.every((val, i) => selectedOptions[i + 1] === val)
+    );
+    if (match) {
+      document.getElementById('variant-id').value = match.id;
+    }
+  }
+
+  function activateOption(selector, position, value) {
+    document.querySelectorAll(`${selector}[data-option-position="${position}"]`)
+      .forEach(el => el.classList.remove('active'));
+    const target = document.querySelector(
+      `${selector}[data-option-position="${position}"][data-value="${CSS.escape(value)}"]`
+    );
+    if (target) target.classList.add('active');
+  }
+
+  // Mark initial selections
+  Object.entries(selectedOptions).forEach(([pos, val]) => {
+    activateOption('.product-pill', pos, val);
+    activateOption('.product-swatch', pos, val);
+  });
+
+  document.querySelectorAll('.product-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       const pos = pill.dataset.optionPosition;
-      document.querySelectorAll(`.product-pill[data-option-position="${pos}"]`).forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
+      selectedOptions[pos] = pill.dataset.value;
+      activateOption('.product-pill', pos, pill.dataset.value);
+      updateVariant();
     });
   });
 
-  const swatches = document.querySelectorAll('.product-swatch');
-  swatches.forEach(swatch => {
+  document.querySelectorAll('.product-swatch').forEach(swatch => {
     swatch.addEventListener('click', () => {
       const pos = swatch.dataset.optionPosition;
-      document.querySelectorAll(`.product-swatch[data-option-position="${pos}"]`).forEach(s => s.classList.remove('active'));
-      swatch.classList.add('active');
+      selectedOptions[pos] = swatch.dataset.value;
+      activateOption('.product-swatch', pos, swatch.dataset.value);
+      updateVariant();
     });
   });
 
